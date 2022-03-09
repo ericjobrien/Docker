@@ -1,0 +1,48 @@
+Setting up a DevOps Pipeline through Azure Devops
+1) After logging into your account, click on New Project
+    a) Create name
+    b) Add Description
+    c) Click create
+2) Connect to Git hub repo to clone project
+    a) Create an Azure repo and import via git hub URL
+    b) Go to pipeline and attach to git hub repository from here
+        i) You'll sign in to your git hub account and select the repo
+3) Create a pipeline
+    a) Go to pipeline, create
+    b) Choose repo
+        i) Either Azure repo, if you chose option a in step 2
+        ii) Or Git hub repo, if you chose option b in step 2
+    c) Select Maven project
+        a) Creates a YAML file for the project which is a script for automating Devops tasks
+4) Run the project by clicking on commit and save
+    a) Since you selected Maven, this will package the project into a jar file
+5) Adjust devops configuration in .yml file located in  Repo then Files
+    a) You can view an example of the azure-pipelines.yml file in this project
+    b) We are compartmentalizing stages - build, deployment, etc
+6) Clone project to IDE for easier .yml configuration
+    a) Go to the .yml file in Repo then Files
+    b) Click the menu to the right of edit, then Clone
+    C) Copy the HTTPS command line
+    d) Open up command line/Git bash: git clone https://example.com
+    e) Example for this project - git clone https://eric137@dev.azure.com/eric137/DigimonPipeline/_git/DigimonPipeline
+    f) This will pop up a prompt to log in to your microsoft account
+        i) Log in with email - for this project, revature email
+        ii) Password - revature, password
+    g) If you can't remember your password, then use the SSH command line to clone
+        i) Click Generate Git Credentials
+        ii) Use this password when prompted in the command line
+7) Connect pipeline to Virtual Machine
+    a) In Azure pipeline, go to Pipelines then Environment
+    b) Click on Add resource
+    c) Name the VM the same thing you named it in the .yml file
+        i) In this example, we named it vm1 - you will find this in the deploy stage of the .yml file
+    d) Choose Virtual Machine as the resource type you wish to add
+    e) Click create, this will prompt you for type of VM
+        i) Choose linix
+        ii) You'll see instructions on the center of this tab
+        ii) Copy the instructions - this is a command line prompt for connecting your VM to the pipeline
+    f) Connect to your VM through command/git bash
+        i) View the connection instructions in the VirtualMachineSetup.txt file located in this project
+    g) Paste the copied command line prompt from step e once you are connected to the VM in the command line
+    h) Should be able to deploy from here
+        i) Can adjust the deploy strategy from runOnce: meaning run the application once to rolling: meaning you can continuously use the pipeline for all changes

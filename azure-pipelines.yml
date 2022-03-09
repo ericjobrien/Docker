@@ -1,0 +1,54 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+#trigger is what activates a run of our pipeline: namely, this is detecting a push to main - runs when a change to main occcurs
+#it detects this with something called a webhook, which we would have to create ourselves
+#if we were using git
+trigger:
+  - master
+
+#pool is the agent(pool of agents) that executes a script
+#in this case, we're asking an ubuntu VM owned by microsoft to execute our pipeline for us
+pool:
+  vmImage: ubuntu-latest
+
+#We can separate the differnet things our script does with stages to jobs to tasks
+stages:
+  - stage: Build_Stage
+    jobs:
+      - job: Build
+        #display name is just what is displayed in the pipeline as it's running
+        displayName: Build Maven Project
+        steps:
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: echo "Executing Bash Script"
+          - task: Maven@3
+            displayName: 'Maven Package'
+            inputs:
+              mavenPomFile: 'pom.xml'
+          - task: CopyFiles@2
+            displayName: 'Copy files to artifact directory'
+            inputs:
+              SourceFolder: '$(System.DefaultWorkingDirectory)'
+              Contents: '**/target/*.?(war|jar)'
+              TargetFolder: $(Build.ArtifactStagingDirectory)
+          - upload: $(Build.ArtifactStagingDirectory)
+            artifact: drop
+  - stage: Deploy_Stage
+    jobs:
+      - deployment: VMDeploy
+        displayName: Web_Deploy
+        timeoutInMinutes: 0
+        environment:
+          name: vm1
+          resourceType: VirtualMachine
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script:
+                    sudo java -jar '$(Pipeline.Workspace)/drop/target/SpringDigimonExample-0.0.1-SNAPSHOT.jar'

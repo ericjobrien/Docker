@@ -1,0 +1,33 @@
+Steps to connect to Docker
+1) Create a jar file in your project
+    a) In command line: mvn package
+    b) You will find the jar file in the Target directory within the project
+    c) Take note of the jar file name - in this case dockerexample-0.0.1-SNAPSHOT.jar
+        i) This information comes from your pom.xml file - it is the artifact id and version of the project
+2) Create a Dockerfile file in the root directory
+    a) From here, you determine the resources to include in your container
+    b) Essentially, you are setting up the environment variables you want to include in the container
+    c) For quick setup:
+        i) FROM openjdk:17-jdk-alpine
+           COPY target/dockerexample-0.0.1-SNAPSHOT.jar docker.jar
+           CMD ["java", "-jar", "/docker.jar"]
+3) Build Docker Image
+    a) In command line: docker build -t image-name .
+        i) For this project: docker build -t docker-test . - don't forget the period
+4) Run the docker container
+    b) In command line: docker run -p 9000:9000 image-name
+        i) -p sets the port, you can set it to whatever you want
+        ii) For this project: docker run -p 9000:9000 docker-test
+        ii) This will launch the application in the command prompt
+        iV) You can now hurl curls at port 9000
+
+Basic Docker Commands:
+1) Docker Images
+    a) docker images - lists all images, with an -a flag, it will show all hidden images as well
+    b) docker image rm image-name - this will delete the image from Docker
+2) Docker Containers
+    a) docker ps - lists all containers, with an -a flag, it will show all hidden containers as well
+    b) docker container rm firstthreecharactersofcontainer - this will delete the container from Docker
+    c) docker container stop firstthree - stop a particular container
+    d) docker container kill firstthree - forcibly stop a container
+    e) docker container prune - remove all exited containers
